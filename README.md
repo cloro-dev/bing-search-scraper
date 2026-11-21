@@ -4,12 +4,12 @@
 
 [![cloro](https://img.shields.io/badge/Powered%20by-cloro-blue?style=for-the-badge)](https://cloro.dev/)
 
-The [Bing Search scraper](https://cloro.dev/bing-search-api/?utm_source=github) by cloro is an API that returns the live Bing results page as parsed JSON: the organic results and, on request, the AI Overview, which is Bing's AI summary at the top of the page, with its sources.
+The [Bing Search scraper](https://cloro.dev/bing-search-api/?utm_source=github) by cloro is an API that returns the live Bing results page as parsed JSON: the organic results, the ads and, on request, the AI Overview, which is Bing's AI summary at the top of the page, with its sources.
 
 In short, cloro's Bing Search API:
 
 - loads a new Bing results page for each request, so the results are not from a cached index;
-- returns `organicResults` and `aioverview` in the same shapes as cloro's [Google Search scraper](https://github.com/cloro-dev/google-search-scraper), so one parser reads both engines;
+- returns `organicResults`, `ads` and `aioverview` in the same shapes as cloro's [Google Search scraper](https://github.com/cloro-dev/google-search-scraper), so one parser reads both engines;
 - sets the Bing market from `country`, for all countries except China, South Korea and Russia;
 - returns a URL to the raw HTML of the page beside the parsed JSON, at no extra credit cost (`include.html`);
 - has an official [Python SDK](https://github.com/cloro-dev/cloro-python) and an official [Node SDK](https://github.com/cloro-dev/cloro-node);
@@ -133,7 +133,7 @@ Bing Search (`POST /v1/monitor/bing`) returns the normal results page at `bing.c
 
 ### Does it return ads, news or image results?
 
-No. The response has the organic results of the first results page, the AI Overview and the HTML URL.
+It returns the ads, with no extra credit: text ads and the shopping cards above the results and in the side rail, in `ads`. It does not return news, image or video results. The response has the organic results and ads of the first results page, the AI Overview on request, and the HTML URL. See the [ads fields](https://cloro.dev/docs/api-reference/endpoint/bing/ads).
 
 ### Which SDK methods call this endpoint?
 

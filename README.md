@@ -56,12 +56,14 @@ Node.js and async/webhook examples are in the [endpoint documentation](https://c
 | --- | --- | --- |
 | `query`\* | The search query. Up to 3,500 characters after URL encoding, fewer for non-Latin scripts | – |
 | `country`\* | Country code (`US`, `GB`, `DE`). Sets the Bing market. All countries except `CN`, `KR` and `RU` | – |
+| `pages` | Number of results pages, 1 to 10. Each page after the first adds +2 credits | `1` |
+| `first` | The result to start at, as in Bing's `first` parameter. `position` counts from it | `1` |
 | `include.aioverview` | `true` returns the AI Overview. `{"markdown": true}` also returns it as Markdown | – |
 | `include.html` | Return a URL to the full HTML of the page that Bing rendered (expires after 24h) | `false` |
 
 \* Required
 
-The endpoint has no `state`, `location`, `device` or `pages` parameter. Each call returns the first results page.
+The endpoint has no `state`, `location` or `device` parameter.
 
 ## What data does the Bing Search scraper return?
 
@@ -106,7 +108,7 @@ The endpoint has no `state`, `location`, `device` or `pages` parameter. Each cal
 
 1. **`organicResults`**: position, title, link, displayed link, snippet, page and, when Bing shows one, date. `link` is the destination URL, not Bing's click-tracking URL.
 2. **`aioverview`**: Bing's AI summary with its text, its sources and one citation pill per chip and source pair. With `{"markdown": true}` it also has `markdown`. It is present only when you set `include.aioverview` and Bing shows a summary.
-3. **`html`**: an array with one URL to the page that Bing rendered, when you set `include.html`.
+3. **`html`**: an array with one URL to each page that Bing rendered, when you set `include.html`.
 
 Full field-level schemas are in the [endpoint reference](https://cloro.dev/docs/api-reference/endpoint/monitor-bing).
 
@@ -129,15 +131,15 @@ Bing Search (`POST /v1/monitor/bing`) returns the normal results page at `bing.c
 
 ### What does a request cost?
 
-3 credits on the async API, the same as Google Search. The AI Overview adds 2 credits, and cloro charges it also when Bing shows no summary. A sync request adds 2 credits ([pricing](https://cloro.dev/docs/guides/providers#provider-list-and-base-costs)). `include.html` costs nothing.
+3 credits on the async API, the same as Google Search. Each page after the first adds 2 credits. The AI Overview adds 2 credits, and cloro charges it also when Bing shows no summary. A sync request adds 2 credits ([pricing](https://cloro.dev/docs/guides/providers#provider-list-and-base-costs)). `include.html` costs nothing.
 
 ### Does it return ads, news or image results?
 
-It returns the ads, with no extra credit: text ads and the shopping cards above the results and in the side rail, in `ads`. It does not return news, image or video results. The response has the organic results and ads of the first results page, the AI Overview on request, and the HTML URL. See the [ads fields](https://cloro.dev/docs/api-reference/endpoint/bing/ads).
+It returns the ads, with no extra credit: text ads and the shopping cards above the results and in the side rail, in `ads`. It does not return news, image or video results. The response has the organic results and ads of each page you ask for, the AI Overview on request, and the HTML URLs. See the [ads fields](https://cloro.dev/docs/api-reference/endpoint/bing/ads).
 
 ### Which SDK methods call this endpoint?
 
-In Python, `client.monitor.bing(query=..., country=..., include=...)` from [`cloro`](https://pypi.org/project/cloro/) 0.5.0 or later. In Node, `client.monitor.bing({ query, country, include })` from [`@cloro-dev/cloro`](https://www.npmjs.com/package/@cloro-dev/cloro) 0.5.0 or later.
+In Python, `client.monitor.bing(query=..., country=..., pages=..., first=..., include=...)` from [`cloro`](https://pypi.org/project/cloro/) 0.5.0 or later. In Node, `client.monitor.bing({ query, country, pages, first, include })` from [`@cloro-dev/cloro`](https://www.npmjs.com/package/@cloro-dev/cloro) 0.5.0 or later.
 
 ### How do I run a large query set on a schedule?
 
